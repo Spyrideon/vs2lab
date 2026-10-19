@@ -31,12 +31,14 @@ class Server:
             try:
                 # pylint: disable=unused-variable
                 (connection, address) = self.sock.accept()  # returns new socket and address of client
+                self._logger.info("Server accepted connection from " + str(address))
                 while True:  # forever
                     data = connection.recv(1024)  # receive data from client
                     if not data:
                         break  # stop if client stopped
                     connection.send(data + "*".encode('ascii'))  # return sent data plus an "*"
                 connection.close()  # close the connection
+                self._logger.info("Server closed connection")
             except socket.timeout:
                 pass  # ignore timeouts
         self.sock.close()
@@ -51,6 +53,12 @@ class Client:
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.connect((const_cs.HOST, const_cs.PORT))
         self.logger.info("Client connected to socket " + str(self.sock))
+
+    def get(self, name):
+        return
+
+    def get_all(self):
+        return
 
     def call(self, msg_in="Hello, world"):
         """ Call server """
