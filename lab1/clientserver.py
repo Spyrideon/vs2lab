@@ -18,6 +18,8 @@ class Server:
     _serving = True
 
     def __init__(self):
+        self.phone_book = const_cs.PHONE_BOOK;
+
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # prevents errors due to "addresses in use"
         self.sock.bind((const_cs.HOST, const_cs.PORT))
