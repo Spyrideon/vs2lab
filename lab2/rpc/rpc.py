@@ -1,3 +1,5 @@
+import logging 
+
 import constRPC
 
 from context import lab_channel
@@ -17,6 +19,7 @@ class Client:
         self.chan = lab_channel.Channel()
         self.client = self.chan.join('client')
         self.server = None
+        self.logger = logging.getLogger('vs2lab.lab2.rpc.Client')
 
     def run(self):
         self.chan.bind(self.client)
@@ -31,6 +34,15 @@ class Client:
         self.chan.send_to(self.server, msglst)  # send msg to server
         msgrcv = self.chan.receive_from(self.server)  # wait for response
         return msgrcv[1]  # pass it to caller
+
+    def _await_ack(self):
+        sender, ack = self.chan.receive_from(self.server)
+        assert ack == constRPC.OK, 'expected ACK from server'
+        self.logger.info('Server {} acknowledged the request.'.format(sender))
+
+    def _await_result(self, callback):
+        _, result = self.chan.receive_from(self.server)
+        callback(result)
 
 
 class Server:
